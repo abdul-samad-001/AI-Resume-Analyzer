@@ -27,6 +27,72 @@
   let lastReport = '';
 
   // ================================================================
+  //  SECTION 0: TOAST NOTIFICATIONS & LOCAL STORAGE
+  // ================================================================
+  
+  function showToast(message, type = 'info') {
+    let toastContainer = $('#toastContainer');
+    if (!toastContainer) {
+      toastContainer = document.createElement('div');
+      toastContainer.id = 'toastContainer';
+      toastContainer.className = 'toast-container';
+      document.body.appendChild(toastContainer);
+    }
+    
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.textContent = message;
+    
+    toastContainer.appendChild(toast);
+    
+    // Trigger layout for animation
+    void toast.offsetWidth;
+    toast.classList.add('toast-show');
+    
+    setTimeout(() => {
+      toast.classList.remove('toast-show');
+      toast.addEventListener('transitionend', () => toast.remove());
+    }, 3000);
+  }
+
+  function triggerConfetti() {
+    const colors = ['#f2d74e', '#95c3de', '#ff9a91', '#fce473', '#4287f5'];
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement('div');
+      confetti.className = 'confetti';
+      confetti.style.left = Math.random() * 100 + 'vw';
+      confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+      confetti.style.animationDelay = Math.random() * 2 + 's';
+      confetti.style.animationDuration = Math.random() * 2 + 2 + 's';
+      document.body.appendChild(confetti);
+      
+      setTimeout(() => {
+        confetti.remove();
+      }, 5000);
+    }
+  }
+
+  function initLocalStorage() {
+    const savedResume = localStorage.getItem('resume-draft');
+    const savedJob = localStorage.getItem('job-draft');
+    if (savedResume) {
+      resumeTextArea.value = savedResume;
+      updateCharCount();
+    }
+    if (savedJob) {
+      jobTextArea.value = savedJob;
+    }
+    resumeTextArea.addEventListener('input', () => {
+      localStorage.setItem('resume-draft', resumeTextArea.value);
+    });
+    jobTextArea.addEventListener('input', () => {
+      localStorage.setItem('job-draft', jobTextArea.value);
+    });
+  }
+
+  initLocalStorage();
+
+  // ================================================================
   //  SECTION 1: THEME MANAGEMENT
   // ================================================================
 
@@ -188,11 +254,14 @@
       const text = await parseFile(file);
       resumeTextArea.value = text;
       updateCharCount();
+      localStorage.setItem('resume-draft', text);
       fileStatus.textContent = `Loaded "${file.name}" (${text.length.toLocaleString()} characters)`;
       fileStatus.style.color = 'var(--success)';
+      showToast('File loaded successfully!', 'success');
     } catch (err) {
       fileStatus.textContent = `Error: ${err.message}`;
       fileStatus.style.color = 'var(--danger)';
+      showToast(err.message, 'danger');
     }
   }
 
@@ -1055,6 +1124,32 @@
     container.appendChild(details);
   }
 
+  function renderHighlights(text, strongVerbs, keywords) {
+    const container = $('#highlightedText');
+    if (!container) return;
+    
+    // Sort strings by length descending to prevent partial word replacements
+    const sortedVerbs = [...new Set(strongVerbs)].sort((a,b) => b.length - a.length);
+    const sortedKeywords = [...new Set(keywords)].sort((a,b) => b.length - a.length);
+    
+    // Escape HTML special characters in original text
+    let escapedText = text.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    
+    // Simple fast regex highlight
+    const highlightPattern = (words, className) => {
+      if(words.length === 0) return;
+      // escape regex specs
+      const escapedWords = words.map(w => w.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'));
+      const regex = new RegExp(`\\b(${escapedWords.join('|')})\\b`, 'gi');
+      escapedText = escapedText.replace(regex, `<span class="${className}">$1</span>`);
+    };
+
+    highlightPattern(sortedKeywords, 'hl-keyword');
+    highlightPattern(sortedVerbs, 'hl-verb');
+
+    container.innerHTML = escapedText;
+  }
+
   // ================================================================
   //  SECTION 8: MAIN ANALYSIS ORCHESTRATOR
   // ================================================================
@@ -1072,6 +1167,10 @@
     analyzeBtn.disabled = true;
     loader.classList.remove('hidden');
     resultsSection.classList.add('hidden');
+    
+    // Show scanning effect
+    const scanLine = $('#scanLine');
+    if(scanLine) scanLine.classList.remove('hidden');
 
     // Simulate progressive loading messages
     const steps = ['Parsing document...', 'Analyzing structure...', 'Extracting keywords...', 'Evaluating readability...', 'Generating suggestions...'];
@@ -1130,6 +1229,15 @@
       renderKeywords(keywordResult, skills, jobKeywords);
       renderSuggestions(suggestions);
       renderReadability(readability);
+      renderHighlights(text, actionVerbs.strong, keywordResult.matched);
+
+      // Trigger Confetti if score is high
+      if (total >= 80) {
+        triggerConfetti();
+        showToast('Great job! Your resume scored very well.', 'success');
+      } else {
+        showToast('Analysis complete.', 'info');
+      }
 
       // Show results
       loader.classList.add('hidden');
@@ -1147,8 +1255,10 @@
       loader.classList.add('hidden');
       fileStatus.textContent = `Analysis error: ${err.message}`;
       fileStatus.style.color = 'var(--danger)';
+      showToast('An error occurred during analysis.', 'danger');
     } finally {
       analyzeBtn.disabled = false;
+      if(scanLine) scanLine.classList.add('hidden');
     }
   });
 
@@ -1232,6 +1342,7 @@
     link.download = 'resume_analysis_report.txt';
     link.click();
     URL.revokeObjectURL(link.href);
+    showToast('Report downloaded successfully!', 'success');
   });
 
   // Copy Suggestions
@@ -1239,10 +1350,7 @@
     if (!lastReport) return;
     try {
       await navigator.clipboard.writeText(lastReport);
-      const btn = $('#copyBtn');
-      const original = btn.innerHTML;
-      btn.textContent = 'Copied!';
-      setTimeout(() => { btn.innerHTML = original; }, 2000);
+      showToast('Suggestions copied to clipboard!', 'success');
     } catch {
       // Fallback
       const textarea = document.createElement('textarea');
@@ -1251,6 +1359,7 @@
       textarea.select();
       document.execCommand('copy');
       document.body.removeChild(textarea);
+      showToast('Suggestions copied to clipboard!', 'success');
     }
   });
 
@@ -1261,10 +1370,15 @@
     roleSelect.value = '';
     resumeFileInput.value = '';
     fileStatus.textContent = '';
-    charCountEl.textContent = '0';
+    scoreEl.textContent = '0';
+    updateCharCount();
     resultsSection.classList.add('hidden');
+    localStorage.removeItem('resume-draft');
+    localStorage.removeItem('job-draft');
     lastReport = '';
     window.scrollTo({ top: 0, behavior: 'smooth' });
+    showToast('All inputs cleared', 'info');
   });
 
 })();
+
