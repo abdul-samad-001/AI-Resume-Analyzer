@@ -6,6 +6,13 @@ The application performs resume parsing, skill detection, keyword analysis, and 
 
 ---
 
+## 🌐 Live Demo
+
+You can try the application live here:
+
+🔗 **Live Application:**  
+https://ai-resume-analyzer-gamma-ashy.vercel.app/
+
 ## 🚀 Features
 
 ### ✨ Dynamic User Experience
@@ -48,6 +55,19 @@ AI-Resume-Analyzer/
 ```
 ---
 
+## 📸 Screenshots
+
+### Dashboard UI
+
+![Dashboard Screenshot](./screenshots/Dashboard.png)
+
+### Resume Upload
+
+![Upload Resume](./screenshots/Upload.png)
+
+### Analysis Results
+
+![Analysis Results](./screenshots/Result.png)
 # ⚙️ Run Locally
 
 Clone the repository.
