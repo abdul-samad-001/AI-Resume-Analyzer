@@ -57,33 +57,17 @@ AI-Resume-Analyzer/
 
 ## 📸 Screenshots
 
-## 📸 Screenshots
+### Dashboard UI
 
-<div align="center">
+![Dashboard Screenshot](./screenshots/Dashboard.png)
 
-<table>
-<tr>
-<td align="center">
-<img src="screenshots/Dashboard.png" width="400"><br>
-<b>Dashboard</b>
-</td>
+### Resume Upload
 
-<td align="center">
-<img src="screenshots/Upload.png" width="400"><br>
-<b>Resume Upload</b>
-</td>
-</tr>
+![Upload Resume](./screenshots/Upload.png)
 
-<tr>
-<td align="center">
-<img src="screenshots/Result.png" width="400"><br>
-<b>Analysis Results</b>
-</td>
-</tr>
+### Analysis Results
 
-</table>
-
-</div>
+![Analysis Results](./screenshots/Result.png)
 
 ---
 
