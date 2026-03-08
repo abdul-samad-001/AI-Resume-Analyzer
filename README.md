@@ -100,26 +100,26 @@ Then connect the GitHub repository to Vercel.
 
 # 🧠 Advanced UI Mechanics
 
--> Dynamic Resume Scanner
--> Simulates AI scanning the resume using animated scan-line overlays.
--> Real-time Auto Save
--> All text inputs persist using localStorage.
--> Keyword & Action Verb Highlights
--> Regex based highlighting:
--> Blue → Job keywords
--> Green → Action verbs
--> Confetti Success Animation
--> Triggered when resume score exceeds 80/100.
--> Toast Notification System
--> Smooth notification system replacing alerts.
+✔ Dynamic Resume Scanner
+✔ Simulates AI scanning the resume using animated scan-line overlays.
+✔ Real-time Auto Save
+✔ All text inputs persist using localStorage.
+✔ Keyword & Action Verb Highlights
+✔ Regex based highlighting:
+✔ Blue → Job keywords
+✔ Green → Action verbs
+✔ Confetti Success Animation
+✔ Triggered when resume score exceeds 80/100.
+✔ Toast Notification System
+✔ Smooth notification system replacing alerts.
 
 # 📱 Responsive Design
 
 The UI adapts for:
 
--> Desktop
--> Tablet
--> Mobile
+✔ Desktop
+✔ Tablet
+✔ Mobile
 Using modern CSS Grid + Flexbox layouts.
 
 # 🛠 Tech Stack
