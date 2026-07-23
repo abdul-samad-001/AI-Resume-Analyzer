@@ -3,7 +3,7 @@
 A **fully client-side AI-powered resume analyzer** built with **HTML, CSS, and Vanilla JavaScript**.
 
 The application performs resume parsing, skill detection, keyword analysis, and generates actionable suggestions — **all inside the browser with zero server processing**. 
- 
+  
 --- 
  
 ## 🌐 Live Demo
