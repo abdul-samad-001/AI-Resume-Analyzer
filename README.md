@@ -9,7 +9,7 @@
 A fully client-side, AI-styled resume analyzer built with **HTML, CSS, and vanilla JavaScript**. It parses resumes, detects skills and keywords, and generates actionable suggestions — entirely inside the browser, with zero server processing.
 
 **🔗 Live Demo:** [ai-resume-analyzer-gamma-ashy.vercel.app](https://ai-resume-analyzer-gamma-ashy.vercel.app/)
-
+ 
 ---
 
 ## Table of Contents
